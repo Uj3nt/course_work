@@ -19,9 +19,8 @@ def initialize_database():
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS Cars (
         CarID INTEGER PRIMARY KEY AUTOINCREMENT,
-        ClientID INTEGER NOT NULL,
+        ClientID INTEGER,
         Make TEXT NOT NULL,
-        Model TEXT NOT NULL,
         Year INTEGER NOT NULL,
         VIN TEXT NOT NULL,
         FOREIGN KEY (ClientID) REFERENCES Clients (ClientID)
@@ -58,6 +57,17 @@ def initialize_database():
         FOREIGN KEY (ServiceID) REFERENCES Services (ServiceID)
     )
     ''')
+
+    cursor.execute('''
+            CREATE TABLE IF NOT EXISTS WorkHistory (
+                WorkID INTEGER PRIMARY KEY AUTOINCREMENT,
+                OrderID INTEGER NOT NULL,
+                Date DATE NOT NULL,
+                Description TEXT NOT NULL,
+                TotalCost REAL NOT NULL,
+                FOREIGN KEY (OrderID) REFERENCES Orders (OrderID)
+            )
+            ''')
 
     conn.commit()
     conn.close()
@@ -121,16 +131,7 @@ def create_order(car_id, service_ids):
         WHERE OrderID = ?
     ''', (total_cost, order_id))
 
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS WorkHistory (
-            WorkID INTEGER PRIMARY KEY AUTOINCREMENT,
-            OrderID INTEGER NOT NULL,
-            Date DATE NOT NULL,
-            Description TEXT NOT NULL,
-            TotalCost REAL NOT NULL,
-            FOREIGN KEY (OrderID) REFERENCES Orders (OrderID)
-        )
-        ''')
+
 
     conn.commit()
     conn.close()
